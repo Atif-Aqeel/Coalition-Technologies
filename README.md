@@ -21,6 +21,42 @@ The CSV contains one active product and 16 variants: four sizes (XS, S, M, L) ac
 
 The custom template renders Dawn's collection banner followed by the dedicated `main-collection-product-grid-with-variants` section. Dawn's normal `collection.json` and `main-collection-product-grid.liquid` remain unchanged.
 
+## Run and test the development theme
+
+From the theme root, start the Shopify development theme and keep the terminal open while testing:
+
+```powershell
+shopify theme dev --store dev-store-startup.myshopify.com
+```
+
+Wait for Shopify CLI to complete the initial upload. It prints a preview URL, a theme editor URL, and the development theme ID. The preview URL uses the local theme files and does not publish the theme.
+
+Use the printed preview theme ID to compare these routes:
+
+```text
+https://dev-store-startup.myshopify.com/collections/standard?preview_theme_id=THEME_ID
+https://dev-store-startup.myshopify.com/collections/show-color-variations?preview_theme_id=THEME_ID
+```
+
+If the custom template has not yet been assigned in Shopify Admin, use this direct template check. It forces Shopify to render the `collection.with-variants.liquid` template for the preview request:
+
+```text
+https://dev-store-startup.myshopify.com/collections/show-color-variations?view=with-variants&preview_theme_id=THEME_ID
+```
+
+After the direct check succeeds, assign `with-variants` to **Show Color Variations** in **Products > Collections > Show Color Variations > Online store > Theme template**, then save. Keep **Standard** assigned to `Default collection`.
+
+### Expected result
+
+| Collection | Expected cards |
+| --- | --- |
+| Standard | One `WOMENS LONG CARDIGAN` card |
+| Show Color Variations | Four cards: `WOMENS LONG CARDIGAN — White`, Green, Blue, and Red |
+
+For every custom card, verify that the image matches its color, the price is `$205.40`, and the card link contains `?variant=`. Open each link and confirm Shopify selects the matching color on the product page.
+
+For mobile testing, open the custom collection preview in Chrome, press `F12`, toggle the device toolbar with `Ctrl + Shift + M`, and test at a width such as 390px. Confirm the Dawn product grid remains aligned and that images, labels, prices, filters, and card links remain usable.
+
 ## How color cards are chosen
 
 - The section scans the product's option names and matches `Color` after lowercasing, so `Color`, `color`, and `COLOR` are recognized. Products without that option are passed to Dawn's normal `card-product` snippet once.
